@@ -2,110 +2,101 @@
 
 ## 1. Purpose
 
-This matrix tracks project requirements from definition through implementation, verification, and evidence. A requirement must not be marked as verified solely because a related file exists.
+This document links project requirements to their implementation locations, verification methods, and supporting evidence.
+
+The matrix is used to monitor implementation progress, prevent requirements from being overlooked, and demonstrate which capabilities have actually been verified.
 
 ## 2. Status Definitions
 
-* **PLANNED:** Defined but not implemented.
-* **IN_PROGRESS:** Implementation has started.
-* **BLOCKED:** Progress depends on an unresolved issue.
-* **IMPLEMENTED:** Implementation exists but verification is incomplete.
-* **VERIFIED:** Acceptance criteria have been checked and supporting evidence is available.
-* **NOT_APPLICABLE:** A documented reason explains why the requirement does not apply.
+* `PLANNED`: The requirement has been identified but implementation has not been confirmed.
+* `IN_PROGRESS`: Work on the requirement has started.
+* `BLOCKED`: Work cannot proceed until a documented dependency or decision is resolved.
+* `IMPLEMENTED`: An implementation exists, but verification is incomplete.
+* `VERIFIED`: The acceptance criteria have been checked and supporting evidence is recorded.
 
-## 3. Requirements Matrix
+A requirement must not be marked `VERIFIED` solely because a file or folder exists.
 
-| ID      | Requirement                                                  | Planned location                            | Verification method                                               | Evidence                              | Initial status |
-| ------- | ------------------------------------------------------------ | ------------------------------------------- | ----------------------------------------------------------------- | ------------------------------------- | -------------- |
-| GOV-01  | Document project scope and expected behavior                 | `README.md`, `product-spec.md`              | Review required sections                                          | Committed documents                   | IN_PROGRESS    |
-| GOV-02  | Maintain durable engineering instructions                    | `AGENTS.md`                                 | Review instructions against project workflow                      | Committed file                        | IMPLEMENTED    |
-| GOV-03  | Trace requirements to implementation and tests               | `requirements-traceability.md`              | Review every requirement and evidence link                        | This matrix and linked evidence       | IN_PROGRESS    |
-| DATA-01 | Document dataset source and permitted use                    | `data/README.md`, `docs/data-dictionary.md` | Verify provenance and license                                     | Source record and license reference   | PLANNED        |
-| DATA-02 | Define data schema and data dictionary                       | `docs/data-dictionary.md`                   | Compare documented fields with actual data                        | Data dictionary and validation output | PLANNED        |
-| DATA-03 | Detect missing, duplicate, invalid, and inconsistent records | `src/data/`, `tests/`                       | Run data quality checks                                           | Test output and quality report        | PLANNED        |
-| DATA-04 | Implement reproducible transformations                       | `pipelines/`, `src/data/`                   | Re-run pipeline from documented inputs                            | Run instructions and output checks    | PLANNED        |
-| DATA-05 | Prevent target leakage and invalid evaluation                | `src/features/`, `src/evaluation/`          | Review split strategy and preprocessing boundaries                | Evaluation protocol and tests         | PLANNED        |
-| ANA-01  | Document business context and analytical question            | `docs/business-analysis.md`                 | Review problem, users, decisions, and evidence                    | Business analysis                     | PLANNED        |
-| ANA-02  | Perform exploratory data analysis                            | `notebooks/`                                | Run notebook and inspect interpretations                          | Executed notebook and plots           | PLANNED        |
-| ANA-03  | Establish a baseline model where appropriate                 | `src/models/`, `experiments/`               | Reproduce baseline evaluation                                     | Configuration and evaluation results  | PLANNED        |
-| ANA-04  | Compare appropriate model alternatives                       | `experiments/`, `src/evaluation/`           | Verify consistent evaluation protocol                             | Experiment comparison                 | PLANNED        |
-| ANA-05  | Document metrics, errors, and limitations                    | `docs/model-card.md`                        | Review metrics and error analysis                                 | Model card and results                | PLANNED        |
-| ANA-06  | Prepare analytical presentation and references               | `deliverables/final-assignment/`            | Validate format and reproducibility against official instructions | Presentation, notebook, references    | PLANNED        |
-| CMP-01  | Identify the official competition target and metric          | `deliverables/competition/`                 | Compare against the official activity instructions                | Requirement record                    | BLOCKED        |
-| CMP-02  | Validate submission schema and required columns              | `deliverables/competition/`                 | Run schema and format checks                                      | Validation output                     | BLOCKED        |
-| CMP-03  | Keep competition experiments reproducible                    | `experiments/`, `deliverables/competition/` | Re-run documented experiment                                      | Configuration and results             | PLANNED        |
-| CMP-04  | Validate final submission package                            | `deliverables/competition/`                 | Check exact official file names, format, and package rules        | Package checklist                     | BLOCKED        |
-| APP-01  | Define the application API contract                          | `openapi.yaml`                              | Validate the specification and endpoint schemas                   | Contract validation result            | PLANNED        |
-| APP-02  | Implement backend behavior                                   | `backend/`                                  | Execute backend and API tests                                     | Test results                          | PLANNED        |
-| APP-03  | Implement persistent storage                                 | `database/`, `backend/`                     | Verify creation, storage, retrieval, and error behavior           | Persistence test results              | PLANNED        |
-| APP-04  | Implement the frontend                                       | `frontend/`                                 | Test main user workflow and error states                          | Screenshots and test results          | PLANNED        |
-| APP-05  | Integrate frontend and backend                               | `frontend/`, `backend/`                     | Execute integration tests                                         | Integration test output               | PLANNED        |
-| QA-01   | Implement automated unit tests                               | `tests/`                                    | Run unit test suite                                               | Test output                           | PLANNED        |
-| QA-02   | Implement integration and API tests                          | `tests/`                                    | Run integration and API checks                                    | Test output                           | PLANNED        |
-| QA-03   | Provide reproducible setup instructions                      | `README.md`, `docs/`                        | Follow instructions in a clean environment                        | Setup verification record             | PLANNED        |
-| DEV-01  | Containerize the application                                 | `Dockerfile`, `docker-compose.yml`          | Build and run containers                                          | Build and runtime logs                | PLANNED        |
-| DEV-02  | Add continuous integration                                   | `.github/workflows/`                        | Trigger workflow and inspect results                              | Successful workflow run               | PLANNED        |
-| DEV-03  | Document and verify deployment                               | `docs/deployment.md`, `ops/`                | Follow deployment procedure and test deployed service             | Deployment URL and smoke test         | PLANNED        |
-| OPS-01  | Document operational risks and troubleshooting               | `ops/`                                      | Review operational procedures                                     | Operational documentation             | PLANNED        |
-| OPS-02  | Add appropriate logs, metrics, and alerts                    | `ops/`                                      | Verify instrumentation and alert behavior                         | Test evidence and configuration       | PLANNED        |
-| SEC-01  | Keep secrets and private data out of version control         | `.gitignore`, `.env.example`, `security/`   | Inspect tracked files and configuration                           | Security review record                | PLANNED        |
-| SEC-02  | Validate external inputs and handle errors safely            | `backend/`, `tests/`                        | Execute validation and negative tests                             | Test results                          | PLANNED        |
-| SEC-03  | Review dependencies and security risks                       | `security/`, CI configuration               | Run appropriate security checks                                   | Scan results and remediation notes    | PLANNED        |
-| AI-01   | Document AI-assisted development and review                  | `docs/ai-usage-report.md`, `AGENTS.md`      | Review representative changes and verification evidence           | AI usage report                       | PLANNED        |
-| AI-02   | Implement reusable agent capabilities                        | `agent-capabilities/`                       | Execute and review the documented workflow                        | Example execution and review          | PLANNED        |
-| AI-03   | Implement a specialized subagent                             | `custom-agent/`                             | Test its scope, output, and boundaries                            | Test record                           | PLANNED        |
-| AI-04   | Implement an MCP tool or server                              | `mcp-server/`                               | Run protocol and tool behavior tests                              | Test output and documentation         | PLANNED        |
-| AI-05   | Implement agent hooks or guardrails                          | `agent-hooks/`                              | Test allowed and blocked behavior                                 | Verification record                   | PLANNED        |
-| AI-06   | Document agent permissions and limitations                   | `security/`, `custom-agent/`                | Review permissions and safeguards                                 | Security review                       | PLANNED        |
-| PORT-01 | Provide a clear project demonstration                        | `docs/demo.md`                              | Follow the demonstration steps                                    | Demo instructions and evidence        | PLANNED        |
-| PORT-02 | Keep documentation consistent with implementation            | `README.md`, `docs/`                        | Review links, commands, and actual behavior                       | Documentation review                  | PLANNED        |
+## 3. Priority Definitions
 
-## 4. Official Requirement Verification
+* `P0`: Essential for a valid and reproducible project.
+* `P1`: Required for the planned MVP.
+* `P2`: Valuable enhancement that can follow the MVP.
 
-Before marking course-specific or competition-specific requirements as verified:
+## 4. Requirements Matrix
 
-1. Read the current official instructions.
-2. Record the exact deliverable, file format, metric, and deadline where applicable.
-3. Update the relevant requirement row.
-4. Add the implementation path and verification method.
-5. Link the actual evidence.
-6. Re-check the requirement before submission.
+| Requirement ID | Description                                              | Priority | Implementation Path                                        | Verification Method                      | Evidence Required                               | Initial Status |
+| -------------- | -------------------------------------------------------- | -------- | ---------------------------------------------------------- | ---------------------------------------- | ----------------------------------------------- | -------------- |
+| DOC-001        | Maintain a complete project overview                     | P0       | `README.md`                                                | Documentation review                     | Reviewed README                                 | IN_PROGRESS    |
+| DOC-002        | Define contribution and agent rules                      | P1       | `AGENTS.md`                                                | Policy review                            | Reviewed instructions                           | IN_PROGRESS    |
+| DOC-003        | Define product scope and acceptance criteria             | P0       | `product-spec.md`                                          | Requirements review                      | Approved specification                          | IN_PROGRESS    |
+| DOC-004        | Map requirements to implementation and evidence          | P0       | `requirements-traceability.md`                             | Matrix review                            | Updated traceability records                    | IN_PROGRESS    |
+| DATA-001       | Document source provenance and permitted use             | P0       | `data/README.md`                                           | Source and license review                | Verified source reference and license           | PLANNED        |
+| DATA-002       | Define the expected input schema                         | P0       | `src/data/`, `pipelines/validation/`                       | Schema validation tests                  | Test output and schema                          | PLANNED        |
+| DATA-003       | Measure data quality issues                              | P0       | `pipelines/validation/`, `notebooks/02_data_quality.ipynb` | Data quality tests                       | Reproducible quality report                     | PLANNED        |
+| DATA-004       | Implement documented transformations                     | P0       | `pipelines/transformation/`, `src/data/`                   | Unit and integration tests               | Transformation tests and outputs                | PLANNED        |
+| DATA-005       | Track processing outputs and versions                    | P1       | `pipelines/`, `experiments/`                               | Reproducibility review                   | Configuration and output records                | PLANNED        |
+| DE-001         | Implement a reproducible ingestion workflow              | P0       | `pipelines/ingestion/`                                     | Pipeline execution                       | Execution log and output verification           | PLANNED        |
+| DE-002         | Create an analytical data model                          | P1       | `database/schemas/`                                        | Schema and integrity tests               | Schema and test results                         | PLANNED        |
+| DE-003         | Provide analytical SQL queries                           | P1       | `database/queries/`                                        | Query tests or independent result checks | Query files and expected results                | PLANNED        |
+| DE-004         | Document pipeline dependencies and recovery              | P1       | `pipelines/orchestration/`, `ops/`                         | Failure and recovery review              | Documented execution and recovery evidence      | PLANNED        |
+| ANA-001        | Perform exploratory analysis                             | P1       | `notebooks/03_exploratory_analysis.ipynb`                  | Notebook execution and review            | Executed notebook and interpreted findings      | PLANNED        |
+| ANA-002        | Produce at least two useful visualizations               | P1       | `frontend/`, `notebooks/`                                  | Dashboard functional test                | Captures and data verification                  | PLANNED        |
+| ML-001         | Establish a justified baseline when applicable           | P1       | `src/models/`, `notebooks/05_baseline_model.ipynb`         | Reproducible experiment                  | Configuration, metrics, and results             | PLANNED        |
+| ML-002         | Evaluate model performance when applicable               | P1       | `src/evaluation/`, `experiments/`                          | Validation protocol review               | Metrics, error analysis, and experiment records | PLANNED        |
+| ML-003         | Document model limitations                               | P1       | `docs/model-card.md`, `docs/limitations.md`                | Model documentation review               | Completed model card                            | PLANNED        |
+| APP-001        | Expose supported analytical functionality through an API | P1       | `backend/`, `openapi.yaml`                                 | API tests and contract review            | Test output and matching API specification      | PLANNED        |
+| APP-002        | Connect the dashboard to actual analytical outputs       | P1       | `frontend/`, `backend/`                                    | Integration test                         | Verified API responses and dashboard outputs    | PLANNED        |
+| TEST-001       | Provide automated unit tests                             | P0       | `tests/unit/`                                              | Test execution                           | Test results                                    | PLANNED        |
+| TEST-002       | Verify data and pipeline integration                     | P0       | `tests/integration/`, `tests/pipeline/`                    | Integration test execution               | Test results                                    | PLANNED        |
+| TEST-003       | Automate appropriate quality checks                      | P1       | `.github/workflows/`                                       | Workflow execution                       | Successful run or documented failure            | PLANNED        |
+| SEC-001        | Prevent secret exposure                                  | P0       | `.gitignore`, `.env.example`, `security/`                  | Repository and configuration review      | Review findings and remediation evidence        | PLANNED        |
+| SEC-002        | Document security threats and controls                   | P1       | `security/threat-model.md`, `docs/security.md`             | Threat model review                      | Documented risks and mitigations                | PLANNED        |
+| PRIV-001       | Document data privacy and restrictions                   | P0       | `security/data-protection.md`, `data/README.md`            | Data governance review                   | Data classification and permitted-use evidence  | PLANNED        |
+| REPRO-001      | Document setup and execution                             | P0       | `docs/setup.md`, `docs/testing.md`                         | Independent reproduction attempt         | Commands and reproduction results               | PLANNED        |
+| DEL-001        | Prepare the final report                                 | P1       | `deliverables/final-report/`                               | Report review                            | Final report and references                     | PLANNED        |
+| DEL-002        | Map official assessment criteria to evidence             | P0       | `deliverables/evaluation-evidence/`                        | Rubric-by-rubric review                  | Completed assessment mapping                    | BLOCKED        |
 
-The competition target, evaluation metric, submission columns, package name, and archive structure must not be guessed.
+## 5. Assessment Traceability
 
-## 5. Evidence Policy
+Requirements from each applicable learning program must be entered into this matrix using the actual official instructions.
 
-Acceptable evidence may include:
+For every assessment criterion, record:
 
-* Committed source files.
-* Automated test results.
-* Reproducible notebook outputs.
-* Data quality reports.
-* Model evaluation reports.
-* API contract validation.
-* Successful CI workflow runs.
-* Deployment verification.
-* Screenshots or recordings of real application behavior.
-* Official submission receipts where relevant.
+* The exact criterion or a faithful summary.
+* Its source document and section.
+* The deliverable that satisfies it.
+* The implementation or evidence location.
+* The required format and submission constraints.
+* The verification method.
+* The current status.
 
-Evidence must correspond to the actual version being reviewed.
+Do not assume that a common project automatically satisfies every assessment requirement. If the programs require different targets, datasets, metrics, or submission formats, maintain separate deliverables within this repository where necessary.
 
-## 6. Release Gate
+## 6. Evidence Log
 
-The project is ready for a release review only when:
+For each verified requirement, record:
 
-* All mandatory requirements have a documented status.
-* All applicable acceptance criteria have been evaluated.
-* Blocking issues are resolved or explicitly disclosed.
-* Data provenance and permitted use are documented.
-* Relevant tests and security checks have been run.
-* Documentation matches the actual implementation.
-* Required deliverables match their official submission specifications.
+* Verification date.
+* Commit or version reviewed.
+* Test command or review procedure.
+* Result.
+* Evidence location.
+* Reviewer, when applicable.
+* Known issues or follow-up actions.
 
-A release review does not guarantee a particular competition ranking, academic grade, or external approval.
+Evidence must be reproducible where practical. Screenshots alone are insufficient when a test log, source file, or reproducible command is necessary to establish correctness.
 
-## 7. Current Project Status
+## 7. Review Rules
 
-The repository is in its initial documentation and architecture phase.
+1. Review this matrix whenever a requirement or implementation changes.
+2. Do not use `VERIFIED` without evidence.
+3. Record blocked requirements and their dependencies.
+4. Keep planned and implemented functionality clearly separated.
+5. Review the complete matrix before a release or final submission.
+6. Resolve or explicitly disclose unmet requirements.
 
-Most implementation, testing, deployment, analytical, and submission requirements remain planned. The matrix must be updated as evidence becomes available.
+## 8. Current Limitations
+
+The initial statuses in this matrix are conservative placeholders. They must be updated after reviewing the actual files, executing relevant tests, and confirming the official assessment criteria.
+
+The matrix is a tracking mechanism, not proof of compliance by itself.
