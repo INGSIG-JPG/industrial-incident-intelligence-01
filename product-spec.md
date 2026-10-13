@@ -1,306 +1,261 @@
-# Product Specification — Industrial Incident Intelligence
+# Product Specification: Industrial Incident Intelligence
 
-## 1. Product Overview
+## 1. Product Summary
 
-Industrial Incident Intelligence is an evidence-driven platform for organizing industrial incident records, analyzing safety-related patterns, evaluating machine learning models, and communicating analytical results through a web application.
+Industrial Incident Intelligence is a proposed data-driven application for organizing, validating, analyzing, and visualizing workplace incident information.
 
-The platform combines a reproducible data workflow with a documented API, persistent storage, automated testing, and a maintainable user interface.
+The product will establish a reproducible data workflow and provide analytical views that help users understand historical incident patterns. Advanced modeling and automated decision-support capabilities will be implemented only when the data, evaluation results, and technical requirements justify them.
 
-The system is intended to support professional decision-making. It does not replace qualified safety personnel, formal risk assessments, legal compliance reviews, or emergency procedures.
+## 2. Problem Definition
 
-## 2. Problem Statement
+Workplace incident records can contain inconsistent categories, missing values, duplicate entries, incompatible formats, and limited analytical context.
 
-Industrial organizations may collect incident records in inconsistent formats and have difficulty transforming those records into reliable, interpretable information.
+These issues can reduce confidence in reports and make it difficult to compare indicators across time periods, locations, or operational categories.
 
-A structured analytical workflow can help users assess data quality, understand historical patterns, compare model performance, and communicate findings in a consistent manner.
+The product addresses this problem through documented data processing, quality controls, analytical storage, and transparent visualization.
 
-The project will investigate this problem using documented datasets and measurable acceptance criteria. Any claims about business demand, effectiveness, or potential financial value must be supported by evidence rather than assumptions.
+## 3. Intended Users
 
-## 3. Product Goals
+### Primary Users
 
-1. Establish a traceable and reproducible data processing workflow.
-2. Document data sources, schemas, quality issues, and permitted uses.
-3. Explore historical incident records and identify meaningful patterns.
-4. Develop and evaluate a baseline analytical model and appropriate alternatives.
-5. Provide a web interface for viewing authorized records and analytical results.
-6. Expose application functionality through a documented API.
-7. Store application data reliably and validate all relevant inputs.
-8. Verify functionality through automated tests and documented checks.
-9. Support repeatable development, containerization, and deployment.
-10. Produce clear technical documentation and evidence of completed work.
+* Occupational health and safety professionals.
+* Industrial safety analysts.
+* Data analysts and engineers.
+* Researchers working with incident datasets.
 
-## 4. Intended Users
+### User Needs
 
-### Primary users
+Users need to:
 
-* Industrial safety and occupational health professionals.
-* Safety analysts and incident investigators.
-* Data analysts and data engineering practitioners.
-* Project reviewers evaluating the technical and analytical work.
+* Understand which data sources are being analyzed.
+* Identify incomplete or inconsistent records.
+* Review historical incident patterns.
+* Filter and compare supported indicators.
+* Understand how each indicator is calculated.
+* Reproduce the analytical process.
+* Recognize the limitations of the findings.
 
-### User needs
+These needs are initial design assumptions and should be refined through feedback or documented research.
 
-Users need to understand what data is available, whether the data is reliable, how analytical results were produced, and what limitations affect their interpretation.
+## 4. Product Goals
 
-Users must be able to distinguish observed facts from model-generated estimates.
+The project aims to:
 
-## 5. Initial Scope
+1. Create a reproducible ingestion and transformation workflow.
+2. Define explicit data quality rules and produce validation evidence.
+3. Store validated information in a structure suitable for analytical queries.
+4. Produce interpretable historical summaries and visualizations.
+5. Evaluate analytical models only when a defensible target and sufficient data are available.
+6. Provide a dashboard connected to verified analytical outputs.
+7. Maintain automated tests and documented execution procedures.
+8. Apply appropriate privacy, security, and data governance controls.
 
-### Included
+Numerical performance targets will be established after the source dataset and implementation constraints are verified.
 
-* Dataset provenance and licensing documentation.
-* Data validation and quality reporting.
-* Exploratory data analysis.
-* Data preparation and feature engineering.
-* Baseline modeling and model comparison.
-* Appropriate validation and evaluation metrics.
-* Error analysis and model limitations.
-* A backend API with an OpenAPI contract.
-* Persistent application storage.
-* A frontend for viewing supported records and results.
-* Automated tests and continuous integration.
-* Containerization and deployment documentation.
-* Security controls and operational guidance.
-* Reproducible reports and technical documentation.
+## 5. Minimum Viable Product
 
-### Excluded from the initial release
+### MVP-1: Data Foundation
 
-* Autonomous safety decisions.
-* Automatic enforcement of workplace procedures.
-* Unverified claims of legal compliance.
-* Claims that historical incident classification alone predicts future accidents.
-* Production deployment involving confidential organizational data without authorization.
-* High-stakes decisions made solely from model outputs.
-* Paid integrations or infrastructure that are not necessary for the initial demonstrator.
+Required capabilities:
 
-## 6. Analytical Problem Definition
+* Document the data source and its permitted use.
+* Read the selected dataset.
+* Validate the expected schema.
+* Measure missing values, duplicates, and invalid records.
+* Apply documented transformations.
+* Produce a repeatable analytical output.
+* Record validation results.
 
-The first analytical task will be selected only after a candidate dataset has been inspected.
+Acceptance criteria:
 
-If the dataset contains historical incident records with a defensible severity label, the initial task may be incident severity classification.
+* The source and license are documented.
+* The expected schema is defined.
+* Quality checks can be executed again.
+* Transformation rules are documented.
+* Invalid records are handled according to explicit rules.
+* Outputs can be traced to the source and processing steps.
 
-The target variable, features, exclusions, and evaluation protocol must be documented before training models.
+### MVP-2: Analytical Layer
 
-If the available data does not support a valid target, the analytical problem must be revised rather than manufacturing labels or assumptions.
+Required capabilities:
 
-The project must distinguish between:
+* Define an analytical data model.
+* Store validated data.
+* Provide reusable SQL queries.
+* Calculate documented indicators.
+* Support temporal or categorical comparisons when the data permits them.
 
-* Descriptive analysis of historical observations.
-* Classification of records with known outcomes.
-* Prediction of future events using a dataset and validation design suitable for forecasting.
+Acceptance criteria:
 
-These tasks are not interchangeable.
+* Table definitions and relationships are documented.
+* Important queries have verification tests or known expected results.
+* Indicator definitions specify numerator, denominator, unit, and applicable filters.
+* Results are consistent with the underlying data.
 
-## 7. Functional Requirements
+### MVP-3: Analysis and Visualization
 
-### FR-01 — Data provenance
+Required capabilities:
 
-The project must record the source, license, collection context, schema, and known limitations of each dataset.
+* Produce exploratory summaries.
+* Explain important patterns and data limitations.
+* Display at least two useful visualizations in the dashboard.
+* Show the data period and relevant filters.
+* Distinguish observed data from synthetic demonstration data.
 
-**Acceptance criteria:**
+Acceptance criteria:
 
-* Source and license documentation exist.
-* Dataset columns and data types are documented.
-* Restrictions and unresolved provenance questions are recorded.
+* Visualizations use verified data.
+* Labels and units are understandable.
+* Empty and error states are handled.
+* Conclusions are supported by analysis rather than assumed in advance.
 
-### FR-02 — Data quality
+### MVP-4: Modeling, If Justified
 
-The data workflow must inspect missing values, duplicate records, invalid values, inconsistent types, and relevant class distributions.
+Possible capabilities:
 
-**Acceptance criteria:**
+* Establish a baseline.
+* Compare suitable candidate models.
+* Evaluate performance using a defensible validation strategy.
+* Review false positives, false negatives, and other relevant errors.
+* Document limitations and potential bias.
 
-* Quality checks are reproducible.
-* Issues are reported explicitly.
-* Transformations are documented.
-* Invalid records are not silently discarded.
+Acceptance criteria:
 
-### FR-03 — Exploratory analysis
-
-The analytical workflow must summarize the dataset and present appropriate visualizations with written interpretations.
-
-**Acceptance criteria:**
-
-* Dataset dimensions, types, missingness, and distributions are reported.
-* Visualizations have meaningful labels.
-* Interpretations distinguish observations from hypotheses.
-
-### FR-04 — Model evaluation
-
-The project must establish a baseline and compare appropriate alternatives when the dataset supports modeling.
-
-**Acceptance criteria:**
-
-* The target and evaluation protocol are documented.
+* The target variable is valid and documented.
+* Training and evaluation data are separated appropriately.
 * Data leakage is addressed.
-* Metrics are appropriate to the task.
-* Results include limitations and error analysis.
-* Final evaluation data is not repeatedly used for model selection.
+* Metrics match the task.
+* Results are reproducible.
+* The model card records actual results and limitations.
 
-### FR-05 — Application API
+If the dataset does not support reliable modeling, this stage will document the limitation and focus on valid statistical analysis instead.
 
-The backend must expose documented endpoints for supported application operations.
+## 6. Functional Requirements
 
-**Acceptance criteria:**
+* **FR-001:** The system shall document its data sources.
+* **FR-002:** The ingestion process shall validate input structure.
+* **FR-003:** The data quality process shall identify configured data issues.
+* **FR-004:** Transformations shall be documented and reproducible.
+* **FR-005:** Validated data shall be available to the analytical layer.
+* **FR-006:** Analytical queries shall calculate documented indicators.
+* **FR-007:** The dashboard shall display supported analytical results.
+* **FR-008:** Users shall be able to apply filters supported by the data model.
+* **FR-009:** Invalid inputs and processing failures shall be handled explicitly.
+* **FR-010:** Relevant components shall have automated tests.
+* **FR-011:** Execution and verification procedures shall be documented.
+* **FR-012:** Model results, when applicable, shall be reproducible and accompanied by limitations.
 
-* An OpenAPI specification describes the API.
-* Inputs and outputs have explicit schemas.
-* Validation and error responses are documented.
-* Automated tests cover important endpoint behavior.
+These requirements describe the intended product. Their implementation status must be maintained in `requirements-traceability.md`.
 
-### FR-06 — Persistence
-
-The application must store supported records and retrieve them consistently.
-
-**Acceptance criteria:**
-
-* Storage initialization is documented.
-* Data validation is enforced where appropriate.
-* Persistence behavior is tested.
-* Database credentials and secrets are not committed.
-
-### FR-07 — User interface
-
-The frontend must provide a clear interface for supported records and available analytical results.
-
-**Acceptance criteria:**
-
-* Users can access the documented core workflow.
-* Loading, empty, and error states are handled.
-* Displayed results are consistent with the API response.
-* Limitations are communicated clearly.
-
-### FR-08 — Automated quality checks
-
-The repository must provide repeatable checks for important application and analytical behavior.
-
-**Acceptance criteria:**
-
-* Test instructions are documented.
-* Relevant automated checks can be executed.
-* Continuous integration reports actual outcomes.
-* Failed or skipped checks are disclosed.
-
-### FR-09 — Reproducibility
-
-A new contributor must be able to follow documented instructions to set up and verify the project.
-
-**Acceptance criteria:**
-
-* Dependencies and configuration are documented.
-* Example configuration contains no real secrets.
-* Setup and execution steps are explicit.
-* Data and model reproduction limitations are recorded.
-
-### FR-10 — Security
-
-The project must implement security controls appropriate to the demonstrator and document remaining risks.
-
-**Acceptance criteria:**
-
-* Secrets are kept out of source control.
-* Inputs are validated.
-* Access and permissions are limited appropriately.
-* Dependencies and known risks are reviewed.
-* Security limitations are documented.
-
-## 8. Non-Functional Requirements
-
-### Maintainability
-
-Code must be modular, readable, and documented where necessary.
-
-### Reproducibility
-
-Analytical results must be traceable to documented data, transformations, configurations, and evaluation procedures.
+## 7. Non-Functional Requirements
 
 ### Reliability
 
-Errors must be handled explicitly, and critical behavior must be covered by appropriate tests.
+Processing failures should be detectable, and rerunning the workflow should not silently duplicate records or corrupt analytical outputs.
+
+### Reproducibility
+
+Dependencies, configuration, data versions, transformations, and execution instructions should be documented sufficiently to reproduce supported results.
 
 ### Security
 
-The application must follow least-privilege principles and avoid exposing confidential information.
+Secrets must not be committed. Input validation, appropriate permissions, and secure configuration must be applied according to the actual architecture.
+
+### Privacy
+
+Only data necessary for the defined analytical purpose should be processed. Dataset licensing, confidentiality, and applicable privacy obligations must be reviewed.
+
+### Maintainability
+
+Code should be modular, tested, and documented.
 
 ### Usability
 
-The interface and documentation must make the intended workflow understandable to the target users.
+The dashboard should provide clear labels, understandable filters, and visible error and empty states.
 
-### Portability
+### Performance
 
-The development environment should be reproducible using documented dependencies and containerization where appropriate.
+Performance targets will be established after dataset size, hardware, database, and deployment conditions are known.
 
-## 9. Proposed Architecture
+## 8. Business Rules and Indicator Governance
 
-The target architecture consists of:
+Each indicator must have:
 
-1. A documented data acquisition and validation workflow.
-2. Data transformation and feature engineering components.
-3. Analytical notebooks and reusable modeling modules.
-4. A backend API defined by OpenAPI.
-5. A persistent database.
-6. A frontend application.
-7. Automated tests and continuous integration.
-8. Containerization and deployment configuration.
-9. Security, operational, and AI-assisted development documentation.
-
-This architecture is a design target. Components must not be described as implemented until they exist and have been verified.
-
-## 10. Evaluation Strategy
-
-The evaluation strategy will be defined after the dataset and analytical task are confirmed.
-
-For classification, candidate metrics may include precision, recall, F1-score, confusion matrix, and suitable class-sensitive metrics.
-
-The selected metrics must reflect the task's actual costs and limitations. No metric will be selected solely because it produces a more favorable result.
-
-For the software application, verification may include unit tests, integration tests, API contract checks, persistence tests, and end-to-end tests.
-
-## 11. Data and Privacy Requirements
-
-* Use only datasets whose permitted use has been assessed.
-* Do not commit credentials or confidential records.
-* Avoid personal identifiers unless they are necessary, authorized, and properly protected.
-* Keep restricted datasets outside public version control.
-* Document data retention and deletion behavior where relevant.
-* Do not use sensitive information to infer unsupported conclusions about individuals.
-
-## 12. Delivery and Deployment
-
-The project will progress through small, verifiable milestones.
-
-Each milestone must identify:
-
-* Scope.
-* Acceptance criteria.
-* Implementation files.
-* Verification procedure.
-* Actual results.
+* A unique identifier.
+* A name and definition.
+* A calculation method.
+* A unit and reporting period.
+* Required source fields.
+* Inclusion and exclusion rules.
 * Known limitations.
+* A verification method.
 
-Deployment must not be reported as successful until the deployed application has been tested.
+Incident counts must not be described as incident rates unless a valid exposure denominator is available. For example, a rate per hours worked requires reliable hours-worked data and a documented calculation method.
 
-## 13. Project Risks
+Comparisons across organizations or periods must account for differences in reporting practices, definitions, and available exposure data.
 
-| Risk                                           | Mitigation                                                           |
-| ---------------------------------------------- | -------------------------------------------------------------------- |
-| Dataset is unsuitable for the intended task    | Inspect schema, provenance, labels, and quality before modeling      |
-| Target leakage                                 | Define a leakage review and isolate evaluation data                  |
-| Scope becomes too large                        | Deliver a minimal functional version before extensions               |
-| External requirements change                   | Maintain a traceability matrix and verify official instructions      |
-| Sensitive data is exposed                      | Review licenses, privacy, repository visibility, and secret handling |
-| Model results are misleading                   | Document metrics, uncertainty, limitations, and errors               |
-| Infrastructure becomes unnecessarily expensive | Prefer a locally reproducible, low-cost initial setup                |
+## 9. Data and Modeling Constraints
 
-## 14. Definition of Done
+The source dataset must be reviewed before selecting prediction targets.
 
-The product is not complete merely because its planned files exist.
+Historical data may support descriptive analysis or historical classification without supporting reliable forecasts of future accidents.
 
-A requirement is verified only when its implementation or deliverable exists, the applicable checks have been performed, the results are documented, and known limitations are disclosed.
+Potential targets, feature sets, and validation methods will be documented only after examining the actual dataset. Temporal validation may be appropriate when the intended use concerns future periods and the available dates support it.
 
-## 15. Current Status
+## 10. Architecture
 
-**Status:** Specification draft.
+The proposed architecture includes:
 
-The dataset, final analytical target, API endpoints, database schema, frontend technology, and deployment target remain subject to verification and implementation.
+* Data source.
+* Ingestion and validation.
+* Transformation pipeline.
+* Analytical storage.
+* Reusable analysis and modeling modules.
+* API.
+* Dashboard.
+* Automated tests and documentation.
 
-No model performance, user adoption, financial return, or production readiness is claimed at this stage.
+Specific technologies will be recorded in an architecture decision record after evaluation.
+
+## 11. Risks and Mitigations
+
+| Risk                              | Mitigation                                         |
+| --------------------------------- | -------------------------------------------------- |
+| Poor source data quality          | Profiling, validation, and transparent reporting.  |
+| Missing or invalid target labels  | Avoid unsupported modeling tasks.                  |
+| Data leakage                      | Document and test the validation design.           |
+| Biased or incomplete reporting    | Describe limitations and avoid overgeneralization. |
+| Exposure of sensitive information | Minimize data and apply access controls.           |
+| Irreproducible results            | Version configurations and document execution.     |
+| Unsupported compliance claims     | Require verified rules and qualified human review. |
+| Scope expansion                   | Deliver the MVP stages in sequence.                |
+
+## 12. Acceptance and Release Criteria
+
+A release candidate must have:
+
+* Verified data documentation.
+* A reproducible processing workflow.
+* Documented analytical outputs.
+* A functional dashboard for implemented features.
+* Passing relevant tests or explicitly documented failures.
+* Setup and execution instructions.
+* Security and privacy review.
+* Updated requirements traceability.
+* A list of known limitations.
+
+A release must not be described as production-ready until deployment, security, reliability, and operational requirements have been evaluated.
+
+## 13. Open Decisions
+
+The following decisions require evidence or confirmation:
+
+* Final dataset and license.
+* Analytical database and storage architecture.
+* Pipeline orchestration technology.
+* Dashboard and API frameworks.
+* Modeling objective, if supported.
+* Deployment environment and cost constraints.
+* Official assessment deliverables and required submission formats.
+
+Each material decision should be recorded in `docs/decision-records/`.
