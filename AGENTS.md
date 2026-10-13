@@ -2,6 +2,7 @@
 
 ## 1. Project Mission
 
+
 Build Industrial Incident Intelligence, a reproducible and secure platform that integrates data engineering, analytical modeling, and full-stack software development to support evidence-based industrial safety decisions.
 
 All project documentation, code comments, technical specifications, commit messages, and user-facing application text must be written in English unless a specific external requirement states otherwise.
