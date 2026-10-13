@@ -1,6 +1,6 @@
 # Requirements Traceability Matrix
 
-## 1. Purpose
+## 1. Purpose 
 
 This document links project requirements to their implementation locations, verification methods, and supporting evidence.
 
