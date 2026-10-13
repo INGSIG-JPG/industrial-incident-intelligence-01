@@ -1,5 +1,4 @@
 # Product Specification: Industrial Incident Intelligence
-
 ## 1. Product Summary
 
 Industrial Incident Intelligence is a proposed data-driven application for organizing, validating, analyzing, and visualizing workplace incident information.
