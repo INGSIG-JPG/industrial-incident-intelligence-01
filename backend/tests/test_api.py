@@ -2,7 +2,14 @@
 Unit tests for Industrial Incident Intelligence FastAPI backend.
 """
 
+import sys
+from pathlib import Path
 from fastapi.testclient import TestClient
+
+# Configurar la ruta para que Python encuentre el módulo app dentro de backend
+backend_path = Path(__file__).resolve().parent.parent
+sys.path.append(str(backend_path))
+
 from app.main import app
 
 client = TestClient(app)
