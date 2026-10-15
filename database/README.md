@@ -16,7 +16,6 @@ CREATE TABLE IF NOT EXISTS incidents (
     corrective_action_taken BOOLEAN NOT NULL,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
-
 ## 3. Indexes for Performance
 To support fast filtering and pagination required by the API contract:
 - Index on `sector` for category filtering.
