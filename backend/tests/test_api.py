@@ -1,30 +1,21 @@
-"""
-Unit tests for Industrial Incident Intelligence FastAPI backend.
-"""
-
-import sys
-from pathlib import Path
 from fastapi.testclient import TestClient
-
-# Configurar la ruta para que Python encuentre el módulo app dentro de backend
-backend_path = Path(__file__).resolve().parent.parent
-sys.path.append(str(backend_path))
-
 from app.main import app
 
 client = TestClient(app)
 
-def test_read_root():
-    response = client.get("/")
+def test_health_check():
+    response = client.get("/api/v1/health")
     assert response.status_code == 200
     data = response.json()
-    assert data["status"] == "online"
-    assert data["database_connected"] is True
+    assert data["status"] == "healthy"
 
-def test_get_incidents_structure():
-    response = client.get("/api/incidents")
+def test_get_incidents():
+    response = client.get("/api/v1/incidents?limit=5&offset=0")
+    assert response.status_code == 200
+    assert isinstance(response.json(), list)
+
+def test_analytics_summary():
+    response = client.get("/api/v1/analytics/summary")
     assert response.status_code == 200
     data = response.json()
-    assert "count" in data
-    assert "data" in data
-    assert isinstance(data["data"], list)
+    assert "total_incidents" in data
