@@ -1,61 +1,32 @@
 openapi: 3.0.3
 info:
   title: Industrial Incident Intelligence API
-  description: REST API specification for industrial safety incident querying, severity classification, and analytical reporting.
   version: 1.0.0
+  description: API REST para la gestión y análisis de incidentes de seguridad industrial.
 paths:
   /api/v1/health:
     get:
-      summary: Health check endpoint
-      description: Returns the operational status of the service and database connection.
+      summary: Health Check
       responses:
         '200':
-          description: Service is healthy.
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  status:
-                    type: string
-                    example: "ok"
-                  timestamp:
-                    type: string
-                    format: date-time
-                    example: "2026-10-13T20:00:00Z"
-
+          description: OK
   /api/v1/incidents:
     get:
-      summary: List industrial incidents
-      description: Retrieves a paginated list of filtered safety incidents.
+      summary: Listar incidentes paginados
       parameters:
-        - name: sector
-          in: query
-          required: false
-          schema:
-            type: string
-          example: "Manufacturing"
-        - name: severity_level
-          in: query
-          required: false
-          schema:
-            type: integer
-          example: 2
         - name: limit
           in: query
-          required: false
           schema:
             type: integer
-            default: 20
+            default: 10
         - name: offset
           in: query
-          required: false
           schema:
             type: integer
             default: 0
       responses:
         '200':
-          description: A list of incident records.
+          description: Lista de incidentes
           content:
             application/json:
               schema:
@@ -63,82 +34,27 @@ paths:
                 properties:
                   total:
                     type: integer
-                    example: 100
-                  items:
+                  data:
                     type: array
                     items:
                       $ref: '#/components/schemas/Incident'
-        '400':
-          $ref: '#/components/responses/400BadRequest'
-
-  /api/v1/analytics/summary:
-    get:
-      summary: Get incident analytical summary
-      description: Returns aggregated metrics by sector and severity level for dashboard visualizations.
-      responses:
-        '200':
-          description: Aggregated analytical metrics.
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  total_incidents:
-                    type: integer
-                    example: 250
-                  by_sector:
-                    type: object
-                    additionalProperties:
-                      type: integer
-                  by_severity:
-                    type: object
-                    additionalProperties:
-                      type: integer
-
 components:
   schemas:
     Incident:
       type: object
-      required:
-        - incident_id
-        - incident_timestamp
-        - sector
-        - incident_type
-        - severity_level
       properties:
         incident_id:
           type: string
-          format: uuid
-          example: "123e4567-e89b-12d3-a456-426614174000"
-        incident_timestamp:
+        date:
           type: string
-          format: date-time
-          example: "2026-10-13T14:30:00Z"
-        sector:
-          type: string
-          example: "Manufacturing"
-        incident_type:
-          type: string
-          example: "Equipment Failure"
+          format: date
         severity_level:
           type: integer
-          enum: [1, 2, 3, 4]
-          example: 2
-        days_away_from_work:
+        sector:
+          type: string
+        days_lost:
           type: integer
-          example: 3
+        description:
+          type: string
         corrective_action_taken:
-          type: boolean
-          example: true
-
-  responses:
-    400BadRequest:
-      description: Invalid request parameters or schema validation failure.
-      content:
-        application/json:
-          schema:
-            type: object
-            properties:
-              error:
-                type: string
-                example: "Invalid query parameters"
+          type: string
