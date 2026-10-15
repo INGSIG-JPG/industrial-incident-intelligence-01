@@ -1,41 +1,76 @@
-"""
-Unit tests for Industrial Incident Intelligence FastAPI backend (v1).
-"""
+from fastapi import FastAPI, HTTPException, Query
+from fastapi.middleware.cors import CORSMiddleware
+import sqlite3
+from typing import Optional
 
-import sys
-from pathlib import Path
-from fastapi.testclient import TestClient
+app = FastAPI(
+    title="Industrial Incident Intelligence API",
+    version="1.0.0",
+    description="API para la gestión y análisis de incidentes industriales (v1)"
+)
 
-# Configurar la ruta para que Python encuentre el módulo app dentro de backend
-backend_path = Path(__file__).resolve().parent.parent
-sys.path.append(str(backend_path))
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
-from app.main import app
+def get_db_connection():
+    conn = sqlite3.connect("../database/incidents.db")
+    conn.row_factory = sqlite3.Row
+    return conn
 
-client = TestClient(app)
+@app.get("/api/v1/health")
+def health_check():
+    try:
+        conn = get_db_connection()
+        cursor = conn.cursor()
+        cursor.execute("SELECT 1")
+        conn.close()
+        return {"status": "healthy", "database": "connected"}
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
 
-def test_health_check():
-    """Valida el endpoint de salud con el contrato /api/v1/health."""
-    response = client.get("/api/v1/health")
-    assert response.status_code == 200
-    data = response.json()
-    assert data["status"] == "online"
-    assert data["database_connected"] is True
+@app.get("/api/v1/incidents")
+def get_incidents(
+    limit: int = Query(10, ge=1, le=100),
+    offset: int = Query(0, ge=0),
+    severity: Optional[str] = None
+):
+    conn = get_db_connection()
+    cursor = conn.cursor()
+    
+    query = "SELECT * FROM incidents"
+    params = []
+    
+    if severity:
+        query += " WHERE severity = ?"
+        params.append(severity)
+        
+    query += " LIMIT ? OFFSET ?"
+    params.extend([limit, offset])
+    
+    cursor.execute(query, params)
+    rows = cursor.fetchall()
+    conn.close()
+    
+    return [dict(row) for row in rows]
 
-def test_get_incidents_structure():
-    """Valida la estructura del listado de incidentes en /api/v1/incidents."""
-    response = client.get("/api/v1/incidents")
-    assert response.status_code == 200
-    data = response.json()
-    assert "total" in data
-    assert "data" in data
-    assert isinstance(data["data"], list)
-
-def test_analytics_summary():
-    """Valida el endpoint de resumen analítico /api/v1/analytics/summary."""
-    response = client.get("/api/v1/analytics/summary")
-    assert response.status_code == 200
-    data = response.json()
-    assert "summary" in data
-    assert "severity_breakdown" in data
-    assert "sector_breakdown" in data
+@app.get("/api/v1/analytics/summary")
+def get_analytics_summary():
+    conn = get_db_connection()
+    cursor = conn.cursor()
+    
+    cursor.execute("SELECT COUNT(*) as total FROM incidents")
+    total = cursor.fetchone()["total"]
+    
+    cursor.execute("SELECT severity, COUNT(*) as count FROM incidents GROUP BY severity")
+    by_severity = {row["severity"]: row["count"] for row in cursor.fetchall()}
+    
+    conn.close()
+    return {
+        "total_incidents": total,
+        "by_severity": by_severity
+    }
