@@ -1,5 +1,10 @@
 from fastapi.testclient import TestClient
-from app.main import app
+import sys
+import os
+
+# Agregamos la ruta del directorio app para que Python encuentre la aplicación sin errores
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '../app')))
+from main import app
 
 client = TestClient(app)
 
