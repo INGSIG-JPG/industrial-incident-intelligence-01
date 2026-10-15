@@ -24,7 +24,10 @@ jobs:
           pip install -r backend/requirements.txt
           pip install pytest httpx
 
+      - name: Run data ingestion pipeline
+        run: |
+          python pipelines/ingest_data.py
+
       - name: Run backend tests
         run: |
-          cd backend
-          pytest tests/
+          pytest backend/tests/test_api.py
