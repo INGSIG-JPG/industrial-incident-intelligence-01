@@ -5,18 +5,53 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Industrial Incident Intelligence - Dashboard</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Chart.js para cumplir con las visualizaciones gráficas exigidas -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 <body class="bg-gray-900 text-gray-100 font-sans leading-normal tracking-normal">
     <div class="container mx-auto px-4 py-8">
-        <header class="mb-8 border-b border-gray-800 pb-4 flex justify-between items-center">
+        <!-- Header -->
+        <header class="mb-8 border-b border-gray-800 pb-4 flex flex-col md:flex-row justify-between items-center gap-4">
             <div>
                 <h1 class="text-3xl font-bold text-blue-400">Industrial Incident Intelligence</h1>
                 <p class="text-gray-400 text-sm">Monitoreo de seguridad industrial y análisis predictivo en tiempo real</p>
             </div>
-            <div id="status-badge" class="px-3 py-1 rounded text-xs font-semibold bg-yellow-600 text-white">Conectando...</div>
+            <div class="flex items-center gap-3">
+                <span id="db-status-text" class="text-xs text-gray-400">Verificando base de datos...</span>
+                <div id="status-badge" class="px-3 py-1 rounded text-xs font-semibold bg-yellow-600 text-white">Conectando...</div>
+            </div>
         </header>
 
-        <section class="bg-gray-800 p-6 rounded-lg shadow-lg mb-8">
+        <!-- Tarjetas de Resumen Estadístico -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+            <div class="bg-gray-800 p-6 rounded-lg shadow-lg border border-gray-700">
+                <h3 class="text-gray-400 text-sm font-medium mb-1">Total de Incidentes Registrados</h3>
+                <p id="total-incidents-metric" class="text-3xl font-bold text-white">--</p>
+            </div>
+            <div class="bg-gray-800 p-6 rounded-lg shadow-lg border border-gray-700">
+                <h3 class="text-gray-400 text-sm font-medium mb-1">Total de Días Perdidos (Bajas)</h3>
+                <p id="total-days-metric" class="text-3xl font-bold text-red-400">--</p>
+            </div>
+        </div>
+
+        <!-- Sección de Gráficos Analíticos -->
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
+            <div class="bg-gray-800 p-6 rounded-lg shadow-lg border border-gray-700">
+                <h3 class="text-lg font-semibold mb-4 text-gray-200">Incidentes por Sector Industrial</h3>
+                <div class="relative h-64">
+                    <canvas id="sectorChart"></canvas>
+                </div>
+            </div>
+            <div class="bg-gray-800 p-6 rounded-lg shadow-lg border border-gray-700">
+                <h3 class="text-lg font-semibold mb-4 text-gray-200">Distribución por Nivel de Severidad</h3>
+                <div class="relative h-64">
+                    <canvas id="severityChart"></canvas>
+                </div>
+            </div>
+        </div>
+
+        <!-- Tabla de Datos -->
+        <section class="bg-gray-800 p-6 rounded-lg shadow-lg border border-gray-700">
             <h2 class="text-xl font-semibold mb-4 text-gray-200">Registros de Incidentes Autorizados</h2>
             <div class="overflow-x-auto">
                 <table class="min-w-full text-left text-sm text-gray-300">
@@ -41,46 +76,133 @@
     </div>
 
     <script>
-        const API_URL = "http://localhost:8000"; // Ajustar según despliegue
+        // Configuración de la API (por defecto localhost u origen actual)
+        const API_URL = window.location.origin.includes("localhost") ? "http://localhost:8000" : window.location.origin;
 
-        async function fetchDashboardData() {
+        let sectorChartInstance = null;
+        let severityChartInstance = null;
+
+        async function loadDashboardData() {
             const badge = document.getElementById("status-badge");
+            const dbText = document.getElementById("db-status-text");
             const tbody = document.getElementById("incidents-table-body");
+            const totalIncidentsEl = document.getElementById("total-incidents-metric");
+            const totalDaysEl = document.getElementById("total-days-metric");
 
             try {
-                const healthRes = await fetch(`${API_URL}/`);
+                // 1. Verificar salud y conexión real a la base de datos con /api/v1/health
+                const healthRes = await fetch(`${API_URL}/api/v1/health`);
                 const healthData = await healthRes.json();
                 
-                if(healthData.status === "online") {
+                if (healthData.status === "online" && healthData.database_connected) {
                     badge.textContent = "Sistema en Línea";
                     badge.className = "px-3 py-1 rounded text-xs font-semibold bg-green-600 text-white";
+                    dbText.textContent = "Base de datos conectada";
+                } else {
+                    badge.textContent = "Degradado";
+                    badge.className = "px-3 py-1 rounded text-xs font-semibold bg-yellow-600 text-white";
                 }
 
-                const res = await fetch(`${API_URL}/api/incidents`);
+                // 2. Obtener resumen analítico desde /api/v1/analytics/summary
+                const analyticsRes = await fetch(`${API_URL}/api/v1/analytics/summary`);
+                const analyticsData = await analyticsRes.json();
+
+                if (analyticsData.summary) {
+                    totalIncidentsEl.textContent = analyticsData.summary.total_incidents || 0;
+                    totalDaysEl.textContent = analyticsData.summary.total_days_lost || 0;
+                    renderCharts(analyticsData);
+                }
+
+                // 3. Obtener listado de incidentes desde /api/v1/incidents
+                const res = await fetch(`${API_URL}/api/v1/incidents?limit=50`);
                 const result = await res.json();
                 
-                if(result.data && result.data.length > 0) {
+                if (result.data && result.data.length > 0) {
                     tbody.innerHTML = result.data.map(inc => `
                         <tr class="hover:bg-gray-700/50">
                             <td class="py-3 px-4 font-mono text-xs text-blue-300">${inc.incident_id}</td>
                             <td class="py-3 px-4">${inc.incident_timestamp}</td>
                             <td class="py-3 px-4">${inc.sector}</td>
                             <td class="py-3 px-4">${inc.incident_type}</td>
-                            <td class="py-3 px-4"><span class="px-2 py-1 rounded bg-red-900/50 text-red-300 text-xs">${inc.severity_level}</span></td>
+                            <td class="py-3 px-4"><span class="px-2 py-1 rounded bg-red-900/50 text-red-300 text-xs">Nivel ${inc.severity_level}</span></td>
                             <td class="py-3 px-4">${inc.days_away_from_work}</td>
                         </tr>
                     `).join('');
                 } else {
-                    tbody.innerHTML = `<tr><td colspan="6" class="py-4 px-4 text-center text-gray-400">No hay registros en la base de datos. Ejecute el pipeline de ingesta.</td></tr>`;
+                    tbody.innerHTML = `<tr><td colspan="6" class="py-4 px-4 text-center text-gray-400">No hay registros almacenados actualmente en la base de datos.</td></tr>`;
                 }
             } catch (error) {
-                badge.textContent = "Sin Conexión API";
+                console.error("Error al conectar con la API:", error);
+                badge.textContent = "Sin Conexión";
                 badge.className = "px-3 py-1 rounded text-xs font-semibold bg-red-600 text-white";
-                tbody.innerHTML = `<tr><td colspan="6" class="py-4 px-4 text-center text-red-400">Error al conectar con el backend. Asegúrate de que FastAPI esté ejecutándose.</td></tr>`;
+                dbText.textContent = "Error de comunicación con el backend";
+                tbody.innerHTML = `<tr><td colspan="6" class="py-4 px-4 text-center text-red-400">Error al conectar con la API en ${API_URL}.</td></tr>`;
             }
         }
 
-        fetchDashboardData();
+        function renderCharts(data) {
+            // Gráfico de Sectores
+            const sectorCtx = document.getElementById('sectorChart').getContext('2d');
+            const sectors = data.sector_breakdown.map(item => item.sector || 'Desconocido');
+            const sectorCounts = data.sector_breakdown.map(item => item.count);
+
+            if (sectorChartInstance) sectorChartInstance.destroy();
+            sectorChartInstance = new Chart(sectorCtx, {
+                type: 'bar',
+                data: {
+                    labels: sectors,
+                    datasets: [{
+                        label: 'Incidentes',
+                        data: sectorCounts,
+                        backgroundColor: 'rgba(59, 130, 246, 0.6)',
+                        borderColor: 'rgba(59, 130, 246, 1)',
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: { legend: { display: false } },
+                    scales: {
+                        y: { ticks: { color: '#9ca3af' }, grid: { color: '#374151' } },
+                        x: { ticks: { color: '#9ca3af' }, grid: { display: false } }
+                    }
+                }
+            });
+
+            // Gráfico de Severidad
+            const severityCtx = document.getElementById('severityChart').getContext('2d');
+            const severities = data.severity_breakdown.map(item => `Nivel ${item.severity_level}`);
+            const severityCounts = data.severity_breakdown.map(item => item.count);
+
+            if (severityChartInstance) severityChartInstance.destroy();
+            severityChartInstance = new Chart(severityCtx, {
+                type: 'doughnut',
+                data: {
+                    labels: severities,
+                    datasets: [{
+                        data: severityCounts,
+                        backgroundColor: [
+                            'rgba(16, 185, 129, 0.7)',
+                            'rgba(245, 158, 11, 0.7)',
+                            'rgba(239, 68, 68, 0.7)',
+                            'rgba(185, 28, 28, 0.7)'
+                        ],
+                        borderColor: '#1f2937',
+                        borderWidth: 2
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { position: 'bottom', labels: { color: '#9ca3af' } }
+                    }
+                }
+            });
+        }
+
+        loadDashboardData();
     </script>
 </body>
 </html>
