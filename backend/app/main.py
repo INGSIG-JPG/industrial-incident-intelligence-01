@@ -17,8 +17,12 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+import os
+
 def get_db_connection():
-    conn = sqlite3.connect("../database/incidents.db")
+    base_dir = os.path.dirname(os.path.abspath(__file__))
+    db_path = os.path.abspath(os.path.join(base_dir, "../../database/incidents.db"))
+    conn = sqlite3.connect(db_path)
     conn.row_factory = sqlite3.Row
     return conn
 
