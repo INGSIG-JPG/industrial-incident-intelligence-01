@@ -1,12 +1,12 @@
 from fastapi import FastAPI, HTTPException, Query
 from fastapi.middleware.cors import CORSMiddleware
 import sqlite3
+import os
 from typing import Optional
 
 app = FastAPI(
     title="Industrial Incident Intelligence API",
-    version="1.0.0",
-    description="API para la gestión y análisis de incidentes industriales (v1)"
+    version="1.0.0"
 )
 
 app.add_middleware(
@@ -16,8 +16,6 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
-
-import os
 
 def get_db_connection():
     base_dir = os.path.dirname(os.path.abspath(__file__))
@@ -41,7 +39,7 @@ def health_check():
 def get_incidents(
     limit: int = Query(10, ge=1, le=100),
     offset: int = Query(0, ge=0),
-    severity: Optional[str] = None
+    severity_level: Optional[str] = None
 ):
     conn = get_db_connection()
     cursor = conn.cursor()
@@ -49,9 +47,9 @@ def get_incidents(
     query = "SELECT * FROM incidents"
     params = []
     
-    if severity:
-        query += " WHERE severity = ?"
-        params.append(severity)
+    if severity_level:
+        query += " WHERE severity_level = ?"
+        params.append(severity_level)
         
     query += " LIMIT ? OFFSET ?"
     params.extend([limit, offset])
@@ -70,8 +68,8 @@ def get_analytics_summary():
     cursor.execute("SELECT COUNT(*) as total FROM incidents")
     total = cursor.fetchone()["total"]
     
-    cursor.execute("SELECT severity, COUNT(*) as count FROM incidents GROUP BY severity")
-    by_severity = {row["severity"]: row["count"] for row in cursor.fetchall()}
+    cursor.execute("SELECT severity_level, COUNT(*) as count FROM incidents GROUP BY severity_level")
+    by_severity = {row["severity_level"]: row["count"] for row in cursor.fetchall()}
     
     conn.close()
     return {
