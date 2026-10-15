@@ -1,68 +1,86 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="es">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Industrial Incident Intelligence Dashboard</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            margin: 0;
-            padding: 20px;
-            background-color: #f4f6f9;
-            color: #333;
-        }
-        .container {
-            max-width: 1100px;
-            margin: auto;
-            background: white;
-            padding: 30px;
-            border-radius: 8px;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-        }
-        h1 {
-            color: #2c3e50;
-            border-bottom: 2px solid #ecf0f1;
-            padding-bottom: 10px;
-        }
-        .grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 20px;
-            margin-top: 20px;
-        }
-        .card {
-            background: #f8f9fa;
-            padding: 20px;
-            border-radius: 6px;
-            border-left: 4px solid #3498db;
-        }
-        .card h3 {
-            margin-top: 0;
-            color: #2980b9;
-        }
-    </style>
+    <title>Industrial Incident Intelligence - Dashboard</title>
+    <script src="https://cdn.tailwindcss.com"></script>
 </head>
-<body>
-    <div class="container">
-        <h1>Industrial Incident Intelligence</h1>
-        <p>Safety incident monitoring, severity classification, and operational decision support dashboard.</p>
-        
-        <div class="grid">
-            <div class="card">
-                <h3>System Status</h3>
-                <p id="status-text">Status: <strong>Operational</strong></p>
-                <p>Connected to backend API contract (OpenAPI 3.0).</p>
+<body class="bg-gray-900 text-gray-100 font-sans leading-normal tracking-normal">
+    <div class="container mx-auto px-4 py-8">
+        <header class="mb-8 border-b border-gray-800 pb-4 flex justify-between items-center">
+            <div>
+                <h1 class="text-3xl font-bold text-blue-400">Industrial Incident Intelligence</h1>
+                <p class="text-gray-400 text-sm">Monitoreo de seguridad industrial y análisis predictivo en tiempo real</p>
             </div>
-            <div class="card">
-                <h3>Key Metrics Summary</h3>
-                <ul id="metrics-list">
-                    <li>Total Historical Incidents: 250</li>
-                    <li>Monitored Sectors: Manufacturing, Mining, Logistics</li>
-                    <li>Severity Scale: 1 (Minor) to 4 (Critical)</li>
-                </ul>
+            <div id="status-badge" class="px-3 py-1 rounded text-xs font-semibold bg-yellow-600 text-white">Conectando...</div>
+        </header>
+
+        <section class="bg-gray-800 p-6 rounded-lg shadow-lg mb-8">
+            <h2 class="text-xl font-semibold mb-4 text-gray-200">Registros de Incidentes Autorizados</h2>
+            <div class="overflow-x-auto">
+                <table class="min-w-full text-left text-sm text-gray-300">
+                    <thead class="bg-gray-700 text-gray-200 uppercase text-xs">
+                        <tr>
+                            <th class="py-3 px-4">ID</th>
+                            <th class="py-3 px-4">Fecha / Hora</th>
+                            <th class="py-3 px-4">Sector</th>
+                            <th class="py-3 px-4">Tipo</th>
+                            <th class="py-3 px-4">Severidad</th>
+                            <th class="py-3 px-4">Días Perdidos</th>
+                        </tr>
+                    </thead>
+                    <tbody id="incidents-table-body" class="divide-y divide-gray-700">
+                        <tr>
+                            <td colspan="6" class="py-4 px-4 text-center text-gray-500">Cargando datos del servidor...</td>
+                        </tr>
+                    </tbody>
+                </table>
             </div>
-        </div>
+        </section>
     </div>
+
+    <script>
+        const API_URL = "http://localhost:8000"; // Ajustar según despliegue
+
+        async function fetchDashboardData() {
+            const badge = document.getElementById("status-badge");
+            const tbody = document.getElementById("incidents-table-body");
+
+            try {
+                const healthRes = await fetch(`${API_URL}/`);
+                const healthData = await healthRes.json();
+                
+                if(healthData.status === "online") {
+                    badge.textContent = "Sistema en Línea";
+                    badge.className = "px-3 py-1 rounded text-xs font-semibold bg-green-600 text-white";
+                }
+
+                const res = await fetch(`${API_URL}/api/incidents`);
+                const result = await res.json();
+                
+                if(result.data && result.data.length > 0) {
+                    tbody.innerHTML = result.data.map(inc => `
+                        <tr class="hover:bg-gray-700/50">
+                            <td class="py-3 px-4 font-mono text-xs text-blue-300">${inc.incident_id}</td>
+                            <td class="py-3 px-4">${inc.incident_timestamp}</td>
+                            <td class="py-3 px-4">${inc.sector}</td>
+                            <td class="py-3 px-4">${inc.incident_type}</td>
+                            <td class="py-3 px-4"><span class="px-2 py-1 rounded bg-red-900/50 text-red-300 text-xs">${inc.severity_level}</span></td>
+                            <td class="py-3 px-4">${inc.days_away_from_work}</td>
+                        </tr>
+                    `).join('');
+                } else {
+                    tbody.innerHTML = `<tr><td colspan="6" class="py-4 px-4 text-center text-gray-400">No hay registros en la base de datos. Ejecute el pipeline de ingesta.</td></tr>`;
+                }
+            } catch (error) {
+                badge.textContent = "Sin Conexión API";
+                badge.className = "px-3 py-1 rounded text-xs font-semibold bg-red-600 text-white";
+                tbody.innerHTML = `<tr><td colspan="6" class="py-4 px-4 text-center text-red-400">Error al conectar con el backend. Asegúrate de que FastAPI esté ejecutándose.</td></tr>`;
+            }
+        }
+
+        fetchDashboardData();
+    </script>
 </body>
 </html>
