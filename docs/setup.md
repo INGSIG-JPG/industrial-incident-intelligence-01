@@ -8,4 +8,5 @@ Este documento detalla los pasos necesarios para desplegar y ejecutar el entorno
 
 ## 1. Clonar el Repositorio
 ```bash
-git clone https://github.com/INGSIG-JPG/industrial-incident-intelligence-01.git
+git clone [https://github.com/INGSIG-JPG/industrial-incident-intelligence-01.git](https://github.com/INGSIG-JPG/industrial-incident-intelligence-01.git)
+cd industrial-incident-intelligence-01
