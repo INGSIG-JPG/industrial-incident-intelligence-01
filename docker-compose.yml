@@ -1,0 +1,16 @@
+version: '3.8'
+
+services:
+  api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: industrial_incident_api
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./database:/app/database
+      - ./data:/app/data
+    environment:
+      - ENV=production
+    restart: always
