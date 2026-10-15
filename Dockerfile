@@ -2,20 +2,18 @@ FROM python:3.10-slim
 
 WORKDIR /app
 
-# Copiar requerimientos e instalar dependencias
+# Copiar e instalar dependencias
 COPY backend/requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 
-# Copiar el código del backend, la base de datos y los pipelines
+# Copiar aplicación, pipelines y datos
 COPY backend/ ./backend/
-COPY database/ ./database/
 COPY pipelines/ ./pipelines/
+COPY database/ ./database/
+COPY data/ ./data/
 
-# Ejecutar la ingesta para poblar la base de datos durante la construcción
-RUN python pipelines/ingest_data.py
-
+# Variables de entorno y puerto
+ENV PYTHONUNBUFFERED=1
 EXPOSE 8000
 
-# Ejecutar el servidor Uvicorn apuntando al backend
-WORKDIR /app/backend
-CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000"]
+CMD ["uvicorn", "backend.app.main:app", "--host", "0.0.0.0", "--port", "8000"]
