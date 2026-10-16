@@ -1,4 +1,7 @@
-# Guía de Instalación y Configuración
+# Guía de instalación y ejecución
+
+## Requisitos
+Python 3.10+, pip, Git. Docker y Docker Compose (opcional).
 
 ## 1. Clonar el Repositorio
 ```bash
