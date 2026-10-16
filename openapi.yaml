@@ -9,10 +9,17 @@ paths:
       summary: Health Check
       responses:
         '200':
-          description: OK
+          description: OK de funcionamiento del servicio
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
   /api/v1/incidents:
     get:
-      summary: Listar incidentes paginados
+      summary: Listar incidentes paginados con filtros
       parameters:
         - name: limit
           in: query
@@ -24,37 +31,20 @@ paths:
           schema:
             type: integer
             default: 0
+        - name: sector
+          in: query
+          schema:
+            type: string
+        - name: severity_level
+          in: query
+          schema:
+            type: integer
       responses:
         '200':
           description: Lista de incidentes
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  total:
-                    type: integer
-                  data:
-                    type: array
-                    items:
-                      $ref: '#/components/schemas/Incident'
-components:
-  schemas:
-    Incident:
-      type: object
-      properties:
-        incident_id:
-          type: string
-        date:
-          type: string
-          format: date
-        severity_level:
-          type: integer
-        sector:
-          type: string
-        days_lost:
-          type: integer
-        description:
-          type: string
-        corrective_action_taken:
-          type: string
+  /api/v1/analytics/summary:
+    get:
+      summary: Resumen analítico de incidentes
+      responses:
+        '200':
+          description: Métricas agregadas y totales
