@@ -1,11 +1,4 @@
-# Guía de Instalación y Configuración - Industrial Incident Intelligence
-
-Este documento detalla los pasos necesarios para desplegar y ejecutar el entorno de desarrollo, pruebas y orquestación con Docker del sistema.
-
-## Prerrequisitos
-- Python 3.10 o superior instalado.
-- Gestor de paquetes `pip`.
-- Docker y Docker Compose (opcional para ejecución en contenedores).
+# Guía de Instalación y Configuración
 
 ## 1. Clonar el Repositorio
 ```bash
