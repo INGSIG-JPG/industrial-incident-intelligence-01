@@ -1,0 +1,6 @@
+incident_id,date,severity_level,sector,days_lost,description,corrective_action_taken
+INC-0001,2025-03-12,2,Manufacturing,3,Chemical spill in containment area,Resolved on site
+INC-0002,2025-05-20,1,Mining,0,Slip and fall on wet surface,Resolved on site
+INC-0003,2025-01-15,4,Energy,12,Unplanned pressure release,Corrective action pending
+INC-0004,2025-08-04,3,Construction,8,Electrical short circuit in panel B,Corrective action pending
+INC-0005,2025-02-11,1,Logistics,0,Minor equipment malfunction,Resolved on site
