@@ -1,22 +1,19 @@
-# Industrial Incident Intelligence
+# Industrial Incident Intelligence Platform
 
-## Project Overview
+## 1. Problem & Target Users
+Occupational Health and Safety (OHS) teams in industrial sectors need proactive tools to identify potential high-severity incidents before they occur. This platform provides predictive classification, analytical dashboards, and structured historical storage to assist safety supervisors in mitigating workplace risks.
 
-Industrial Incident Intelligence is a data engineering and analytics project focused on transforming workplace incident data into structured, reproducible, and evidence-based insights that can support occupational health and safety (OHS) decision-making.
+*⚠️ **Disclaimer:** This tool serves strictly as a decision-support system and does not replace professional on-site safety inspections or mandatory regulatory compliance protocols.*
 
-The project combines data ingestion, data quality management, analytical storage, exploratory data analysis, statistical analysis, machine learning experiments, and interactive visualization within a single software project.
+---
 
-The system is intended to support safety professionals and organizations in understanding historical incident patterns, identifying data quality problems, monitoring indicators, and evaluating analytical approaches. It is a decision-support project, not a replacement for professional safety assessments or legally required risk management procedures.
+## 2. Architecture Diagram
 
-**Project status:** In development.
-
-**Primary domain:** Occupational health and safety, industrial safety, and incident analytics.
-
-**Primary technical areas:** Data engineering, Python, SQL, data analytics, machine learning, API development, and data visualization.
-
-## Problem Statement
-
-Workplace incident information may be distributed across spreadsheets, reports, databases, and other sources. Inconsistent formats, missing values, duplicated records, and limited analytical capabilities can make it difficult to produce reliable indicators and compare incident patterns.
+```mermaid
+graph TD
+    A[Raw CSV Data / Synthetic Generator] -->|Ingestion & Validation Pipeline| B[(SQLite / PostgreSQL DB)]
+    B -->|FastAPI REST Endpoints| C[Backend API Services]
+    C -->|JSON API Responses| D[Frontend Dashboard / UI]
 
 This project aims to establish a reproducible workflow for preparing, validating, analyzing, and presenting incident data. Its usefulness will depend on the quality, availability, representativeness, and permitted use of the selected dataset.
 
