@@ -7,3 +7,5 @@ INC-005,2026-03-05,2,Manufacturing,2,Forklift minor collision with pallet rack,R
 INC-006,2026-03-20,4,Energy,30,Electrical panel flashover during maintenance,Implemented strict lockout-tagout protocol
 INC-007,2026-04-02,1,Logistics,1,Strain while lifting heavy box,Provided ergonomic lifting training
 INC-008,2026-04-18,3,Chemicals,10,Pressure relief valve minor leak,Replaced valve seals and calibrated sensors
+python pipelines/generate_sample_data.py
+python pipelines/ingest_data.py
