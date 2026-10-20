@@ -1,0 +1,2 @@
+No known vulnerabilities found in 15 inspected packages.
+(Audit executed via pip-audit against requirements.txt)
