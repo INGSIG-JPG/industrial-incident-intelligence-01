@@ -1,14 +1,8 @@
--- Resumen de incidentes por severidad y días perdidos
 SELECT 
-    severity_level, 
-    COUNT(*) as total_incidents, 
-    SUM(days_lost) as total_days_lost
+    department,
+    COUNT(*) as total_incidents,
+    AVG(severity_level) as avg_severity,
+    SUM(CASE WHEN severity_level >= 3 THEN 1 ELSE 0 END) as high_severity_count
 FROM incidents
-GROUP BY severity_level;
-
--- Resumen por sector industrial
-SELECT 
-    sector, 
-    COUNT(*) as incident_count
-FROM incidents
-GROUP BY sector;
+GROUP BY department
+ORDER BY total_incidents DESC;
