@@ -23,26 +23,26 @@ def generate_data():
         work_shift = random.choice(WORK_SHIFTS)
         activity = random.choice(ACTIVITIES)
         
-        # Factores antecedentes (sin fuga de información)
-        worker_tenure_years = round(random.uniform(0.5, 15.0), 1)
-        hours_into_shift = round(random.uniform(0.1, 10.5), 1)
-        permit_to_work = random.choice([True, True, False]) # True: Permiso vigente, False: Sin permiso / deficiente
+        # Factores previos (sin fuga de información para el modelo)
+        worker_experience_months = random.randint(3, 120)
+        hours_into_shift = round(random.uniform(0.5, 10.5), 1)
+        permit_to_work = random.choice([True, True, False])
         
-        # Cálculo de severidad basado en factores de riesgo con ruido aleatorio
+        # Cálculo de severidad basado en riesgo previo + ruido aleatorio
         risk_score = 0.0
         if not permit_to_work:
             risk_score += 1.5
-        if hours_into_shift > 7.0: # Fatiga acumulada
+        if hours_into_shift > 7.0:
             risk_score += 1.0
-        if worker_tenure_years < 1.0: # Personal nuevo
+        if worker_experience_months < 12:
             risk_score += 0.8
+        if work_shift == "Night":
+            risk_score += 0.5
         if activity in ["Height Work", "Chemical Handling"]:
             risk_score += 1.2
             
-        # Añadir ruido aleatorio
         risk_score += random.uniform(0.0, 1.5)
         
-        # Mapeo a severidad de 1 (Leve) a 4 (Crítico)
         if risk_score < 2.0:
             severity_level = 1
         elif risk_score < 3.5:
@@ -52,23 +52,41 @@ def generate_data():
         else:
             severity_level = 4
 
+        # Derivación descriptiva posterior (no se usan como features predictivas)
+        if severity_level == 1:
+            incident_type = "Near Miss"
+            injury_type = "None"
+        elif severity_level == 2:
+            incident_type = "First Aid"
+            injury_type = random.choice(["Cut/Laceration", "Contusion"])
+        elif severity_level == 3:
+            incident_type = "Medical Treatment"
+            injury_type = random.choice(["Burn", "Fracture"])
+        else:
+            incident_type = "Lost Time Injury"
+            injury_type = random.choice(["Fracture", "Chemical Exposure"])
+
+        description = f"Incident recorded during {activity.lower()} in {department} sector ({work_shift} shift)."
+
         records.append({
             "incident_id": incident_id,
             "date": incident_date,
             "department": department,
             "work_shift": work_shift,
-            "activity": activity,
-            "worker_tenure_years": worker_tenure_years,
-            "hours_into_shift": hours_into_shift,
+            "incident_type": incident_type,
+            "injury_type": injury_type,
             "permit_to_work": permit_to_work,
             "severity_level": severity_level,
-            "description": f"Incident recorded during {activity.lower()} in {department} ({work_shift} shift)."
+            "description": description,
+            "worker_experience_months": worker_experience_months,
+            "hours_into_shift": hours_into_shift,
+            "activity": activity
         })
 
     fieldnames = [
-        "incident_id", "date", "department", "work_shift", "activity",
-        "worker_tenure_years", "hours_into_shift", "permit_to_work",
-        "severity_level", "description"
+        "incident_id", "date", "department", "work_shift", "incident_type", 
+        "injury_type", "permit_to_work", "severity_level", "description", 
+        "worker_experience_months", "hours_into_shift", "activity"
     ]
     
     with open(OUTPUT_FILE, mode="w", newline="", encoding="utf-8") as f:
@@ -76,7 +94,7 @@ def generate_data():
         writer.writeheader()
         writer.writerows(records)
 
-    print(f"Successfully generated {NUM_RECORDS} leak-free SST incident records at '{OUTPUT_FILE}'.")
+    print(f"Generated {NUM_RECORDS} leak-free records with unified schema at '{OUTPUT_FILE}'.")
 
 if __name__ == "__main__":
     generate_data()
