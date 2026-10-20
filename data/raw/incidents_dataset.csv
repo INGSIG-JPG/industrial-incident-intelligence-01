@@ -1,11 +1,1 @@
-incident_id,date,severity_level,sector,days_lost,description,corrective_action_taken
-INC-001,2026-01-10,2,Manufacturing,3,Minor laceration on assembly line guardrail,Retrained operator and reinforced guard
-INC-002,2026-01-15,4,Chemicals,14,Chemical splash in secondary containment,Upgraded personal protective equipment and valves
-INC-003,2026-02-01,1,Logistics,0,Slipped on warehouse loading bay,Cleaned oil spill and updated floor traction
-INC-004,2026-02-12,3,Mining,7,Conveyor belt jam resulting in hand crush risk,Installed emergency stop lanyard
-INC-005,2026-03-05,2,Manufacturing,2,Forklift minor collision with pallet rack,Re-certified forklift driver credentials
-INC-006,2026-03-20,4,Energy,30,Electrical panel flashover during maintenance,Implemented strict lockout-tagout protocol
-INC-007,2026-04-02,1,Logistics,1,Strain while lifting heavy box,Provided ergonomic lifting training
-INC-008,2026-04-18,3,Chemicals,10,Pressure relief valve minor leak,Replaced valve seals and calibrated sensors
-python pipelines/generate_sample_data.py
-python pipelines/ingest_data.py
+
