@@ -24,9 +24,13 @@ jobs:
           pip install -r backend/requirements.txt
           pip install pytest httpx
 
-      - name: Run data ingestion pipeline
-        run: |
-          python pipelines/ingest_data.py
+      - name: Generate sample data
+      run: |
+        python pipelines/generate_sample_data.py
+
+    - name: Run data ingestion pipeline
+      run: |
+        python pipelines/ingest_data.py
 
       - name: Run backend tests
         run: |
