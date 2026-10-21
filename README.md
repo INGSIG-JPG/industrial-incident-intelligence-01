@@ -15,8 +15,7 @@ graph TD
     B --> C[(SQLite / PostgreSQL DB)]
     C --> D[FastAPI REST Endpoints]
     D --> E[Frontend Dashboard / UI]
-This project aims to establish a reproducible workflow for preparing, validating, analyzing, and presenting incident data. Its usefulness will depend on the quality, availability, representativeness, and permitted use of the selected dataset.
-
+```
 ## Project Objectives
 
 1. Establish a documented and reproducible data ingestion process.
