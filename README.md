@@ -11,10 +11,10 @@ Occupational Health and Safety (OHS) teams in industrial sectors need proactive 
 
 ```mermaid
 graph TD
-    A[Raw CSV Data / Synthetic Generator] -->|Ingestion & Validation Pipeline| B[(SQLite / PostgreSQL DB)]
-    B -->|FastAPI REST Endpoints| C[Backend API Services]
-    C -->|JSON API Responses| D[Frontend Dashboard / UI]
-
+    A[Raw CSV Data / Synthetic Generator] --> B[Ingestion & Validation Pipeline]
+    B --> C[(SQLite / PostgreSQL DB)]
+    C --> D[FastAPI REST Endpoints]
+    D --> E[Frontend Dashboard / UI]
 This project aims to establish a reproducible workflow for preparing, validating, analyzing, and presenting incident data. Its usefulness will depend on the quality, availability, representativeness, and permitted use of the selected dataset.
 
 ## Project Objectives
